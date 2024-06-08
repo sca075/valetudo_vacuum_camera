@@ -3,15 +3,15 @@ Collections of Drawing Utility
 Drawable is part of the Image_Handler
 used functions to draw the elements on the Numpy Array
 that is actually our camera frame.
-Version 1.5.9-rc2
+Version: v2024.06.1
 """
 
-import logging
-import math
-import re
+from __future__ import annotations
 
-import numpy as np
+import math
+
 from PIL import ImageDraw, ImageFont
+import numpy as np
 
 from custom_components.valetudo_vacuum_camera.types import (
     Color,
@@ -20,7 +20,7 @@ from custom_components.valetudo_vacuum_camera.types import (
     Point,
 )
 
-_LOGGER = logging.getLogger(__name__)
+# import re
 
 
 class Drawable:
@@ -44,15 +44,17 @@ class Drawable:
         layer: NumpyArray, pixels: dict, pixel_size: int, color: Color
     ) -> NumpyArray:
         """Drawing the layers (rooms) from the vacuum json data."""
-        # Create a backup of the array the image
         image_array = layer
-        # Draw rectangles for each point in data
+        # Loop through pixels to find min and max coordinates
         for x, y, z in pixels:
+            col = x * pixel_size
+            row = y * pixel_size
+            # Draw pixels
             for i in range(z):
-                col = (x + i) * pixel_size
-                row = y * pixel_size
-                image_array[row : row + pixel_size, col : col + pixel_size] = color
-        # Convert the image array to a PIL image
+                image_array[
+                    row : row + pixel_size,
+                    col + i * pixel_size : col + (i + 1) * pixel_size,
+                ] = color
         return image_array
 
     @staticmethod
@@ -416,7 +418,6 @@ class Drawable:
         # to draw the robot.
         tmp_x, tmp_y = 26, 26
         # Draw Robot
-        _LOGGER.info(f"Drawing {log} Robot With Angle: {angle}")
         radius = 25  # Radius of the vacuum constant
         r_scaled = radius // 11  # Offset scale for placement of the objects.
         r_cover = r_scaled * 12  # Scale factor for cover
@@ -503,7 +504,7 @@ class Drawable:
         """
         for obstacle_info in obstacle_info_list:
             enter = obstacle_info.get("points", {})
-            label = obstacle_info.get("label", {})
+            # label = obstacle_info.get("label", {})
             center = (enter["x"], enter["y"])
 
             radius = 6
@@ -514,28 +515,42 @@ class Drawable:
         return image
 
     @staticmethod
-    def status_text(image: PilPNG, size: int, color: Color, status: str) -> None:
+    def status_text(
+        image: PilPNG,
+        size: int,
+        color: Color,
+        status: list[str],
+        path_font: str,
+        position: bool,
+    ) -> None:
         """Draw the Status Test on the image."""
-        text = status
         # Load a fonts
-        path_font1 = "custom_components/valetudo_vacuum_camera/utils/fonts/FiraSans.ttf"
-        path_font2 = "custom_components/valetudo_vacuum_camera/utils/fonts/NotoSansCJKhk-VF.ttf"
-        font1 = ImageFont.truetype(path_font1, size)
-        font2 = ImageFont.truetype(path_font2, size)
-        split_text = re.split(r'[\(\)]', text)
-        split_text = [item for item in split_text if item]
+        path_default_font = (
+            "custom_components/valetudo_vacuum_camera/utils/fonts/FiraSans.ttf"
+        )
+        default_font = ImageFont.truetype(path_default_font, size)
+        user_font = ImageFont.truetype(path_font, size)
+        # Define the text and position
+        if position:
+            x, y = 10, 10
+        else:
+            x, y = 10, image.height - 20 - size
         # Create a drawing object
         draw = ImageDraw.Draw(image)
-        # Define the text and position
-        x, y = 10, 10
-        # Draw the text on the image
-        for i, item in enumerate(split_text):
-            if i == 1:  # The room name is always the second item
-                font = font2  # Use font2 for the room name
-                item = f"({item})"
-                width = 1
-            else:
-                font = font1  # Use font1 for other pieces of text
+        # Draw the text
+        for text in status:
+            if "\u2211" in text or "\u03DE" in text:
+                font = default_font
                 width = None
-            draw.text((x, y), item, font=font, fill=color, stroke_width=width)
-            x += draw.textlength(item, font=font1)
+            else:
+                font = user_font
+                is_variable = path_font.endswith("VT.ttf")
+                if is_variable:
+                    width = 2
+                else:
+                    width = None
+            if width:
+                draw.text((x, y), text, font=font, fill=color, stroke_width=width)
+            else:
+                draw.text((x, y), text, font=font, fill=color)
+            x += draw.textlength(text, font=default_font)

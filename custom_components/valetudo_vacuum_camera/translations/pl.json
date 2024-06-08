@@ -3,41 +3,91 @@
     "step": {
       "user": {
         "data": {
-          "vacuum_entity": "Odkurzacz Entity ID",
+          "vacuum_entity": "Identyfikator encji odkurzacza",
           "vacuum_config_entry": "Dane konfiguracyjne odkurzacza",
-          "vacuum_map": "Odkurzacz Topic",
-          "vacuum_identifiers": "Odkurzacz MQTT ID",
+          "vacuum_map": "Temat odkurzacza",
+          "vacuum_identifiers": "Identyfikator MQTT odkurzacza",
           "unique_id": ""
         },
-        "data_description": {"vacuum_entity": "Odkurzacz Entity ID"},
-        "description": "Konfiguracja Kamery.",
-        "title": "Valetudo Camera Setup"
+        "data_description": {
+          "vacuum_entity": "Identyfikator encji odkurzacza"
+        },
+        "description": "Konfiguracja kamery.",
+        "title": "Konfiguracja kamery Valetudo"
       }
     }
   },
   "options": {
     "step": {
       "init": {
-        "data": {"camera_config_action": "Działanie"},
-        "description": "Możliwe zmiany:",
-        "title": "Opcje Kamery Valetudo"
+        "title": "Opcje kamery Valetudo",
+        "description": "### _Standardowe opcje_:",
+        "data": {
+          "camera_config_action": "Działanie"
+        }
+      },
+      "advanced": {
+        "title": "Opcje kamery Valetudo",
+        "description": "### _Zaawansowane opcje_:",
+        "data": {
+          "camera_config_action": "Działanie"
+        }
+      },
+      "download_logs": {
+        "title": "Plik dziennika kamery Valetudo",
+        "description": "### _Kopiowanie plików dziennika_:",
+        "data": {
+          "camera_logs_progres": "Co zrobić?"
+        }
       },
       "image_opt": {
         "data": {
-          "rotate_image": "Obrócić Obraz",
-          "margins": "150",
-          "auto_zoom": "Włącz automatyczne powiększanie",
-          "show_vac_status": "Pokaż stan odkurzacza.",
-          "color_text": "[255, 255, 255]",
+          "rotate_image": "Obróć",
+          "margins": "Marginesy obrazu.",
+          "auto_zoom": "Włącz automatyczne przybliżanie",
+          "zoom_lock_ratio": "Zablokuj proporcje.",
+          "aspect_ratio": "Proporcje obrazu.",
           "enable_www_snapshots": "Eksportuj migawki PNG."
         },
         "data_description": {
-          "rotate_image": "Stopień 0, 90, 180, 270",
-          "margins": "Marginesy automatycznego przycinania w pikselach.",
+          "rotate_image": "Stopnie 0, 90, 180, 270",
+          "margins": "Automatyczne przycinanie marginesów w pikselach.",
+          "aspect_ratio": "Proporcje obrazu."
+        },
+        "description": "Opcje obrazu kamery",
+        "title": "Opcje obrazu"
+      },
+      "image_offset": {
+        "data": {
+          "offset_top": "Górny offset",
+          "offset_bottom": "Dolny offset",
+          "offset_left": "Lewy offset",
+          "offset_right": "Prawy offset"
+        },
+        "data_description": {
+          "offset_top": "Górny offset obrót 0 w pikselach.",
+          "offset_bottom": "Dolny offset obrót 0 w pikselach.",
+          "offset_left": "Lewy offset obrót 0 w pikselach.",
+          "offset_right": "Prawy offset obrót 0 w pikselach."
+        },
+        "description": "Przesunięcie obrazu kamery",
+        "title": "Przesunięcie obrazu"
+      },
+      "status_text": {
+        "data": {
+          "show_vac_status": "Pokaż status odkurzacza.",
+          "vac_status_font": "Fira Sans",
+          "vac_status_size": "Rozmiar tekstu",
+          "vac_status_position": "Pozycja tekstu: Na dole (WYŁ)",
+          "color_text": "[255, 255, 255]"
+        },
+        "data_description": {
+          "vac_status_font": "Czcionka tekstu domyślnie Fira Serif.",
+          "vac_status_size": "Domyślny rozmiar tekstu 50.",
           "color_text": "Kolor tekstu statusu odkurzacza."
         },
-        "description": "Opcje obrazu z kamery",
-        "title": "Opcje obrazu"
+        "description": "Opcje obrazu",
+        "title": "Opcje tekstu statusu"
       },
       "base_colours": {
         "data": {
@@ -49,35 +99,35 @@
           "color_no_go": "[255, 0, 0]",
           "color_zone_clean": "[255, 255, 255]",
           "color_background": "[0, 125, 255]",
-          "add_base_alpha": "Skonfiguruj przezroczystość:"
+          "add_base_alpha": "Skonfiguruj Przezroczystość:"
         },
         "data_description": {
           "color_charger": "Kolor ładowarki.",
-          "color_move": "Kolor ścieżki.",
-          "color_wall": "Kolor ścian.",
+          "color_move": "Kolor ruchu.",
+          "color_wall": "Kolor ściany.",
           "color_robot": "Kolor robota.",
-          "color_go_to": "Przejdź do koloru.",
-          "color_no_go": "Kolor nie do przejścia.",
-          "color_zone_clean": "Strefa czystego koloru.",
+          "color_go_to": "Kolor przechodzenia do.",
+          "color_no_go": "Kolor zakazu.",
+          "color_zone_clean": "Kolor czyszczenia strefy.",
           "color_background": "Kolor tła."
         },
-        "description": "Opcje kolorów aparatu.",
-        "title": "Konfiguracja kolorów podstawowych."
+        "description": "Opcje kolorów kamery.",
+        "title": "Ustawienia Kolorów Podstawowych"
       },
       "alpha_1": {
         "data": {
-          "alpha_charger": "Ładowarka Alfa   ",
-          "alpha_move": "Ścieżka Alfa     ",
-          "alpha_wall": "Ściany Alfa    ",
-          "alpha_robot": "Robota Alpha     ",
-          "alpha_go_to": "Przejdź do obszaru Alpha",
-          "alpha_no_go": "Obszar zakazu wstępu Alpha",
-          "alpha_zone_clean": "Strefa Czysta Alpha",
-          "alpha_background": "Alfa w tle",
-          "alpha_text": "Tekst alfa      "
+          "alpha_charger": "Ładowarka Alpha   ",
+          "alpha_move": "Ruchy Alpha     ",
+          "alpha_wall": "Ściany Alpha     ",
+          "alpha_robot": "Robot Alpha     ",
+          "alpha_go_to": "Przejdź do Obszaru Alpha",
+          "alpha_no_go": "Obszar Bez Przejścia Alpha",
+          "alpha_zone_clean": "Strefa Czyszczenia Alpha",
+          "alpha_background": "Tło Alpha",
+          "alpha_text": "Tekst Alpha      "
         },
-        "description": "Opcje Aparatu. Alfa 1",
-        "title": "Kolory bazowe Alpha Chanel"
+        "description": "Opcje kamery. Alpha 1",
+        "title": "Kolory Alfa Kanału Podstawowe"
       },
       "rooms_colours_1": {
         "data": {
@@ -89,20 +139,20 @@
           "color_room_5": "[96, 123, 139]",
           "color_room_6": "[224, 255, 255]",
           "color_room_7": "[209, 238, 238]",
-          "add_room_1_alpha": "Skonfiguruj przezroczystość:"
+          "add_room_1_alpha": "Skonfiguruj Przezroczystość:"
         },
         "data_description": {
-          "color_room_0": "Pokój nr 1, kolor podłogi.",
-          "color_room_1": "Pokój nr 2",
-          "color_room_2": "Pokój nr 3",
-          "color_room_3": "Pokój nr 4",
-          "color_room_4": "Pokój nr 5",
-          "color_room_5": "Pokój nr 6",
-          "color_room_6": "Pokój nr 7",
-          "color_room_7": "Pokój nr 8"
+          "color_room_0": "Pokój 1",
+          "color_room_1": "Pokój 2",
+          "color_room_2": "Pokój 3",
+          "color_room_3": "Pokój 4",
+          "color_room_4": "Pokój 5",
+          "color_room_5": "Pokój 6",
+          "color_room_6": "Pokój 7",
+          "color_room_7": "Pokój 8"
         },
-        "description": "Opcje kolorów aparatu..",
-        "title": "Pokoje od 1 do 8 kolorów"
+        "description": "Opcje kolorów kamery.",
+        "title": "Pokoje 1 do 8 Kolory"
       },
       "rooms_colours_2": {
         "data": {
@@ -114,74 +164,100 @@
           "color_room_13": "[245, 176, 65]",
           "color_room_14": "[82, 190, 128]",
           "color_room_15": "[72, 201, 176]",
-          "add_room_2_alpha": "Skonfiguruj przezroczystość:"
+          "add_room_2_alpha": "Skonfiguruj Przezroczystość:"
         },
         "data_description": {
-          "color_room_8": "Pokój nr 9",
-          "color_room_9": "Pokój nr 10",
-          "color_room_10": "Pokój nr 11",
-          "color_room_11": "Pokój nr 12",
-          "color_room_12": "Pokój nr 13",
-          "color_room_13": "Pokój nr 14",
-          "color_room_14": "Pokój nr 15",
-          "color_room_15": "Pokój nr 16"
+          "color_room_8": "Pokój 9",
+          "color_room_9": "Pokój 10",
+          "color_room_10": "Pokój 11",
+          "color_room_11": "Pokój 12",
+          "color_room_12": "Pokój 13",
+          "color_room_13": "Pokój 14",
+          "color_room_14": "Pokój 15",
+          "color_room_15": "Pokój 16"
         },
-        "description": "Opcje kolorów aparatu.",
-        "title": "Pokoje od 9 do 15 kolorów"
+        "description": "Opcje kolorów kamery.",
+        "title": "Pokoje 9 do 15 Kolory"
       },
       "alpha_2": {
         "data": {
-          "alpha_room_0": "Pokój nr 1, kolor podłogi",
-          "alpha_room_1": "Pokój nr 2",
-          "alpha_room_2": "Pokój nr 3",
-          "alpha_room_3": "Pokój nr 4",
-          "alpha_room_4": "Pokój nr 5",
-          "alpha_room_5": "Pokój nr 6",
-          "alpha_room_6": "Pokój nr 7",
-          "alpha_room_7": "Pokój nr 8"
+          "alpha_room_0": "Pokój 1",
+          "alpha_room_1": "Pokój 2",
+          "alpha_room_2": "Pokój 3",
+          "alpha_room_3": "Pokój 4",
+          "alpha_room_4": "Pokój 5",
+          "alpha_room_5": "Pokój 6",
+          "alpha_room_6": "Pokój 7",
+          "alpha_room_7": "Pokój 8"
         },
-        "description": "Opcje aparatu. Alfa 2",
-        "title": "Kolory pokoi Alpha Chanel"
+        "description": "Opcje kamery. Alfa 2",
+        "title": "Kanał Alfa Kolory Pokojów"
       },
       "alpha_3": {
         "data": {
-          "alpha_room_8": "Pokój nr 9",
-          "alpha_room_9": "Pokój nr 10",
-          "alpha_room_10": "Pokój nr 11",
-          "alpha_room_11": "Pokój nr 12",
-          "alpha_room_12": "Pokój nr 13",
-          "alpha_room_13": "Pokój nr 14",
-          "alpha_room_14": "Pokój nr 15",
-          "alpha_room_15": "Pokój nr 16"
+          "alpha_room_8": "Pokój 9",
+          "alpha_room_9": "Pokój 10",
+          "alpha_room_10": "Pokój 11",
+          "alpha_room_11": "Pokój 12",
+          "alpha_room_12": "Pokój 13",
+          "alpha_room_13": "Pokój 14",
+          "alpha_room_14": "Pokój 15",
+          "alpha_room_15": "Pokój 16"
         },
-        "description": "Opcje aparatu. Alfa 3",
-        "title": "Kolory pokoi Alpha Chanel"
+        "description": "Opcje kamery. Alfa 3",
+        "title": "Kanał Alfa Kolory Pokojów"
       }
     }
   },
   "selector": {
     "camera_config_action": {
       "options": {
-        "opt_1": "Skonfiguruj Obraz",
-        "opt_2": "Konfiguruj kolory ogólne",
-        "opt_3": "Kolory pokoi od 1 do 8",
-        "opt_4": "Kolory pokoi od 9 do 16",
-        "opt_5": "Kopiuj dzienniki kamery do www"
+        "opt_1": "Skonfiguruj obraz",
+        "opt_2": "Skonfiguruj Ogólne Kolory",
+        "opt_3": "Kolory Pokoje 1 do 8",
+        "opt_4": "Kolory Pokoje 9 do 16",
+        "opt_5": "Zaawansowane Opcje"
+      }
+    },
+    "camera_config_advanced": {
+      "options": {
+        "opt_1": "Skonfiguruj Przesunięcie Obrazu",
+        "opt_2": "Skonfiguruj Tekst Statusu",
+        "opt_3": "Kopiuj Dzienniki Kamery do www",
+        "opt_4": "Zmień Nazwy Opcji Kolorów"
+      }
+    },
+    "camera_logs_progres": {
+      "options": {
+        "opt_1": "Kopiuj Dzienniki do www",
+        "opt_2": "Usuń Dzienniki z www"
+      }
+    },
+    "vacuum_status": {
+      "options": {
+        "connected": "Połączony",
+        "disconnected": "Odłączony",
+        "charging": "Ładowanie",
+        "cleaning": "Czyszczenie",
+        "docked": "Zacumowany",
+        "idle": "Bezczynny",
+        "paused": "Wstrzymany",
+        "returning": "Powracanie"
       }
     }
   },
   "services": {
     "turn_off": {
       "name": "[%key:common::action::turn_off%]",
-      "description": "Wyłącza aparat."
+      "description": "Wyłącza kamerę."
     },
     "turn_on": {
       "name": "[%key:common::action::turn_on%]",
-      "description": "Włącza aparat."
+      "description": "Włącza kamerę."
     },
     "snapshot": {
-      "name": "Zrób zdjęcie",
-      "description": "Robi zdjęcie z aparatu.",
+      "name": "Zrób migawkę",
+      "description": "Robi migawkę z kamery.",
       "fields": {
         "filename": {
           "name": "Nazwa pliku",

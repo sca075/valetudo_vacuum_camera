@@ -1,12 +1,22 @@
+"""
+Common functions for the Valetudo Vacuum Camera integration.
+Version: 2024.06.3b3
+"""
+
 from __future__ import annotations
 
+import asyncio
+import json
 import logging
+from typing import Any
 
-from homeassistant.components import mqtt
 from homeassistant.components.mqtt import DOMAIN as MQTT_DOMAIN
 from homeassistant.components.vacuum import DOMAIN as VACUUM_DOMAIN
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr, entity_registry as er
+
+from .const import KEYS_TO_UPDATE
+from .hass_types import GET_MQTT_DATA
 
 _LOGGER: logging.Logger = logging.getLogger(__name__)
 
@@ -19,6 +29,7 @@ def get_device_info(
     entity registry and device registry.
     """
     vacuum_entity_id = er.async_resolve_entity_id(er.async_get(hass), config_entry_id)
+    _LOGGER.debug(f"Vacuum entity ID: {vacuum_entity_id}")
     if not vacuum_entity_id:
         _LOGGER.error("Unable to lookup vacuum's entity ID. Was it removed?")
         return None
@@ -28,7 +39,7 @@ def get_device_info(
     vacuum_device = device_registry.async_get(
         entity_registry.async_get(vacuum_entity_id).device_id
     )
-
+    _LOGGER.debug(f"Vacuum device: {vacuum_device}")
     if not vacuum_device:
         _LOGGER.error("Unable to locate vacuum's device ID. Was it removed?")
         return None
@@ -62,7 +73,7 @@ def get_vacuum_mqtt_topic(vacuum_entity_id: str, hass: HomeAssistant) -> str | N
     """
     try:
         return list(
-            mqtt.get_mqtt_data(hass)
+            hass.data[GET_MQTT_DATA]
             .debug_info_entities.get(vacuum_entity_id)
             .get("subscriptions")
             .keys()
@@ -82,75 +93,49 @@ async def update_options(bk_options, new_options):
     """
     Keep track of the modified options.
     Returns updated options after editing in Config_Flow.
-    version: 1.5.8
     """
     # Initialize updated_options as an empty dictionary
-    updated_options = {}
-
-    keys_to_update = [
-        "rotate_image",
-        "margins",
-        "auto_zoom",
-        "show_vac_status",
-        "get_svg_file",
-        "enable_www_snapshots",
-        "color_charger",
-        "color_move",
-        "color_wall",
-        "color_robot",
-        "color_go_to",
-        "color_no_go",
-        "color_zone_clean",
-        "color_background",
-        "color_text",
-        "alpha_charger",
-        "alpha_move",
-        "alpha_wall",
-        "alpha_robot",
-        "alpha_go_to",
-        "alpha_no_go",
-        "alpha_zone_clean",
-        "alpha_background",
-        "alpha_text",
-        "color_room_0",
-        "color_room_1",
-        "color_room_2",
-        "color_room_3",
-        "color_room_4",
-        "color_room_5",
-        "color_room_6",
-        "color_room_7",
-        "color_room_8",
-        "color_room_9",
-        "color_room_10",
-        "color_room_11",
-        "color_room_12",
-        "color_room_13",
-        "color_room_14",
-        "color_room_15",
-        "alpha_room_0",
-        "alpha_room_1",
-        "alpha_room_2",
-        "alpha_room_3",
-        "alpha_room_4",
-        "alpha_room_5",
-        "alpha_room_6",
-        "alpha_room_7",
-        "alpha_room_8",
-        "alpha_room_9",
-        "alpha_room_10",
-        "alpha_room_11",
-        "alpha_room_12",
-        "alpha_room_13",
-        "alpha_room_14",
-        "alpha_room_15",
-    ]
-
-    for key in keys_to_update:
-        if key in new_options:
-            updated_options[key] = new_options[key]
-        else:
-            updated_options[key] = bk_options[key]
+    # updated_options = {}
+    keys_to_update = KEYS_TO_UPDATE
+    try:
+        updated_options = {
+            key: new_options[key] if key in new_options else bk_options[key]
+            for key in keys_to_update
+        }
+    except KeyError as e:
+        _LOGGER.warning(f"Error in migrating options, please re-setup the camera: {e}")
+        return bk_options
     # updated_options is a dictionary containing the merged options
     updated_bk_options = updated_options  # or backup_options, as needed
     return updated_bk_options
+
+
+async def async_load_file(file_to_load: str) -> Any:
+    """Asynchronously load JSON data from a file."""
+    loop = asyncio.get_event_loop()
+
+    def read_file(my_file: str):
+        """Helper function to read data from a file."""
+        with open(my_file) as file:
+            return file.read()
+
+    try:
+        return await loop.run_in_executor(None, read_file, file_to_load)
+    except Exception as e:
+        _LOGGER.warning(f"Blocking IO issue detected: {e}")
+        return None
+
+
+def _write_to_file(file_path, data):
+    """Helper function to write data to a file."""
+    with open(file_path, "w") as datafile:
+        json.dump(data, datafile, indent=2)
+
+
+async def async_write_json_to_disk(file_to_write: str, json_data):
+    """Asynchronously write data to a JSON file."""
+    loop = asyncio.get_event_loop()
+    try:
+        await loop.run_in_executor(None, _write_to_file, file_to_write, json_data)
+    except Exception as e:
+        _LOGGER.warning(f"Exception {e}")
