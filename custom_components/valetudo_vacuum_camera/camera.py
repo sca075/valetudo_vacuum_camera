@@ -1,6 +1,6 @@
 """
 Camera
-Version: v2024.06.1
+Version: v2024.06.4
 Image Processing Threading implemented on Version 1.5.7.
 """
 
@@ -22,7 +22,7 @@ from PIL import Image
 from homeassistant import config_entries, core
 from homeassistant.components.camera import PLATFORM_SCHEMA, Camera, CameraEntityFeature
 from homeassistant.const import CONF_NAME, CONF_UNIQUE_ID
-from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import config_validation as cv, issue_registry as ir
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.reload import async_setup_reload_service
 from homeassistant.helpers.storage import STORAGE_DIR
@@ -81,6 +81,7 @@ async def async_setup_entry(
 ) -> None:
     """Setup camera from a config entry created in the integrations UI."""
     config = hass.data[DOMAIN][config_entry.entry_id]
+
     # Update our config to and eventually add or remove option.
     if config_entry.options:
         config.update(config_entry.options)
@@ -113,8 +114,8 @@ class ValetudoCamera(Camera):
     def __init__(self, hass, device_info):
         super().__init__()
         self.hass = hass
-        self._attr_model = "Valetudo Vacuums"
-        self._attr_brand = "Valetudo Vacuum Camera"
+        self._attr_model = "Vacuums Camera"
+        self._attr_brand = "MQTT Vacuum Camera"
         self._attr_name = "Camera"
         self._attr_is_on = True
         self._directory_path = self.hass.config.path()  # get Home Assistant path
@@ -191,6 +192,14 @@ class ValetudoCamera(Camera):
         self._colours.set_initial_colours(device_info)
         # Create the processor for the camera.
         self.processor = CameraProcessor(self.hass, self._shared)
+        ir.async_create_issue(
+            hass,
+            DOMAIN,
+            "restart_required",
+            is_fixable=True,
+            severity=ir.IssueSeverity.WARNING,
+            translation_key="confirm_restart",
+        )
 
     async def async_added_to_hass(self) -> None:
         """Handle entity added to Home Assistant."""
